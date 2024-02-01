@@ -5,13 +5,7 @@ import pg from "pg"
 const app = express()
 const port = 3000
 
-app.use(cors(
-    {
-        origin: ["https://deploy-mern-frontend.vercel.app"],
-        methods: ["POST", "GET"],
-        credentials: true
-    }
-));
+
 
 const db = new pg.Client({
     user: "postgres",
