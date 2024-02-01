@@ -1,12 +1,9 @@
 import express from "express"
 import bodyParser from "body-parser"
 import pg from "pg"
-import cors from "cors"
 
 const app = express()
 const port = 3000
-
-
 
 const db = new pg.Client({
     user: "postgres",
@@ -19,8 +16,9 @@ db.connect()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("../public"))
-app.set('views', '../views');
-app.set('view engine', 'ejs');
+app.set("views", "../views")
+app.set("view engine", "ejs")
+
 let currentUserId = 2
 
 let users = []
@@ -45,26 +43,27 @@ async function checkUsers(userId) {
 
 async function addUser(newUser) {
     try {
-        const result = await db.query("INSERT INTO users(first_name,color) VALUES ($1,$2) RETURNING first_name;", [
+        const result = await db.query("INSERT INTO users(first_name,color) VALUES($1,$2) RETURNING *;", [
             newUser.name,
             newUser.color,
         ])
-        return result[0].first_name
+        console.log("Succesfully added new member")
+        return result
     } catch (err) {
-        console.log("Couldn't add new user")
+        console.log(err)
     }
 }
 
 app.get("/", async (req, res) => {
     const countries = await checkVisisted(currentUserId)
-    const users = await checkUsers();
-    const currentUser = users.find((user) => user.id === currentUserId);
+    const users = await checkUsers()
+    const currentUser = users.find((user) => user.id === currentUserId)
 
     res.render("index.ejs", {
         countries: countries,
         total: countries.length,
         users: users,
-        color: currentUser ? currentUser.color : ""
+        color: currentUser ? currentUser.color : "",
     })
 })
 app.post("/add", async (req, res) => {
@@ -107,10 +106,16 @@ app.route("/new")
     .post(async (req, res) => {
         //Hint: The RETURNING keyword can return the data that was inserted.
         //https://www.postgresql.org/docs/current/dml-returning.html
-        const newUser = req.body
-        const newuser = await addUser(newUser)
-        res.redirect("/")
-        console.log(newuser)
+        if (req.body.name && req.body.color) {
+            const result = await addUser(newUser)
+            currentUserId = result.rows[0]
+            console.log(currentUserId)
+            res.redirect("/")
+        } else (
+            res.render("new", {
+               error :"You must give a name and choose a color"
+            })
+        )
     })
 
 app.listen(port, () => {

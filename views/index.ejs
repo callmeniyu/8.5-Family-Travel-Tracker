@@ -14,7 +14,7 @@
             <label for="<%= user.id %>" style="background-color: <%= user.color %>"> <%= user.first_name %> </label>
             <% }); %>
 
-            <input type="submit" name="add" value="new" id="tab" />
+            <input type="submit" name="add" value="new" id="tab" formmethod="get" formaction="/new" />
             <label for="tab">Add Family Member</label>
         </form>
 
