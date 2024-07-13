@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import pg from "pg";
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 const db = new pg.Client({
   user: "postgres",
@@ -16,6 +16,8 @@ db.connect();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.set("view engine", "ejs")
+
 
 let currentUserId = 1;
 
@@ -49,7 +51,7 @@ app.get("/", async (req, res) => {
     countries: countries,
     total: countries.length,
     users: users,
-    color: currentUser.color,
+    
   });
 });
 app.post("/add", async (req, res) => {

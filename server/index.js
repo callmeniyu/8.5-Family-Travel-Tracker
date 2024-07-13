@@ -111,11 +111,10 @@ app.route("/new")
             currentUserId = result.rows[0]
             console.log(currentUserId)
             res.redirect("/")
-        } else (
+        } else
             res.render("new", {
-               error :"You must give a name and choose a color"
+                error: "You must give a name and choose a color",
             })
-        )
     })
 
 app.listen(port, () => {
